@@ -7,7 +7,6 @@ import LDrawer from './drawer'
 import LUpload from './upload'
 import LInputSelect from './input-select'
 import LDateTimePick from './date-time-pick'
-import LGrid from './grid'
 import LSearchForm from './search-form'
 import LProTable from './pro-table'
 
@@ -22,7 +21,6 @@ const components: {
   LUpload,
   LInputSelect,
   LDateTimePick,
-  LGrid,
   LSearchForm,
   LProTable,
 }
@@ -55,7 +53,6 @@ export {
   LUpload,
   LInputSelect,
   LDateTimePick,
-  LGrid,
   LSearchForm,
   LProTable,
 }

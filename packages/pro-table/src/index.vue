@@ -1,65 +1,67 @@
 <template>
-	<SearchForm v-if="isShowSearch" v-show="searchShow" @reset="search" @search="search"
-		v-model:searchParams="searchParamsAsyc" :searchInitParams="searchInitParams" :colSpan="colSpan"
-		:class="{ 'card': cardStyle, 'margin-b': cardStyle }">
-		<template v-if="!!useSlots().search" #search>
-			<slot name="search"></slot>
-		</template>
-		<template v-if="!!useSlots().searchCollapsed" #searchCollapsed>
-			<slot name="searchCollapsed"></slot>
-		</template>
-	</SearchForm>
+	<div class="liquid-pro-table">
+		<SearchForm v-if="isShowSearch" v-show="searchShow" @reset="search" @search="search"
+			v-model:searchParams="searchParamsAsyc" :searchInitParams="searchInitParams" :colSpan="colSpan"
+			:class="{ 'card': cardStyle, 'margin-b': cardStyle }">
+			<template v-if="!!useSlots().search" #search>
+				<slot name="search"></slot>
+			</template>
+			<template v-if="!!useSlots().searchCollapsed" #searchCollapsed>
+				<slot name="searchCollapsed"></slot>
+			</template>
+		</SearchForm>
 
-	<!-- 表格内容 -->
-	<div class="liquid-pro-table" :class="{ 'card': cardStyle }">
-		<!-- 表格头部 操作按钮 -->
-		<div class="table-header">
-			<div class="header-button-lf">
-				<slot name="tableHeader" :selectedListIds="selectedListIds" :selectList="selectedList" :isSelected="isSelected">
-				</slot>
-			</div>
-			<div class="header-button-ri" v-if="toolButton">
-				<el-button :icon="Refresh" circle @click="getTableList"> </el-button>
-				<el-button :icon="Operation" circle v-if="columns.length" @click="openColSetting"> </el-button>
-				<el-button :icon="Search" circle v-if="isShowSearch" @click="searchShow = !searchShow"> </el-button>
-			</div>
-		</div>
-		<!-- 表格主体 -->
-		<el-table ref="tableRef" v-bind="$attrs" v-loading="loading" :data="tableData" :border="border" :row-key="rowKey"
-			@selection-change="selectionChange">
-			<!-- 默认插槽 -->
-			<slot></slot>
-			<template v-for="item in tableColumns" :key="item">
-				<!-- selection || index -->
-				<el-table-column v-bind="item" :align="item.align ?? 'center'" :reserve-selection="item.type == 'selection'"
-					v-if="item.type == 'selection' || item.type == 'index'">
-				</el-table-column>
-				<!-- expand 支持 tsx 语法 && 作用域插槽 (tsx > slot) -->
-				<el-table-column v-bind="item" :align="item.align ?? 'center'" v-if="item.type == 'expand'" v-slot="scope">
-					<component :is="item.render" :row="scope.row" v-if="item.render"> </component>
-					<slot :name="item.type" :row="scope.row" v-else></slot>
-				</el-table-column>
-				<!-- other 循环递归 -->
-				<TableColumn v-if="!item.type && item.prop && item.isShow" :column="item">
-					<template v-for="slot in Object.keys($slots)" #[slot]="scope">
-						<slot :name="slot" :row="scope.row"></slot>
-					</template>
-				</TableColumn>
-			</template>
-			<!-- 无数据 -->
-			<template #empty>
-				<div class="table-empty">
-					<img src="./images/notData.png" alt="notData" />
-					<div>暂无数据</div>
+		<!-- 表格内容 -->
+		<div class="liquid-table" :class="{ 'card': cardStyle }">
+			<!-- 表格头部 操作按钮 -->
+			<div class="table-header">
+				<div class="header-button-lf">
+					<slot name="tableHeader" :selectedListIds="selectedListIds" :selectList="selectedList" :isSelected="isSelected">
+					</slot>
 				</div>
-			</template>
-		</el-table>
-		<!-- 分页组件 -->
-		<Pagination v-if="pagination" :pageable="pageable" :handleSizeChange="handleSizeChange"
-			:handleCurrentChange="handleCurrentChange" />
+				<div class="header-button-ri" v-if="toolButton">
+					<el-button :icon="Refresh" circle @click="getTableList"> </el-button>
+					<el-button :icon="Operation" circle v-if="columns.length" @click="openColSetting"> </el-button>
+					<el-button :icon="Search" circle v-if="isShowSearch" @click="searchShow = !searchShow"> </el-button>
+				</div>
+			</div>
+			<!-- 表格主体 -->
+			<el-table ref="tableRef" v-bind="$attrs" v-loading="loading" :data="tableData" :border="border" :row-key="rowKey"
+				@selection-change="selectionChange">
+				<!-- 默认插槽 -->
+				<slot></slot>
+				<template v-for="item in tableColumns" :key="item">
+					<!-- selection || index -->
+					<el-table-column v-bind="item" :align="item.align ?? 'center'" :width="item.width"
+						:reserve-selection="item.type == 'selection'" v-if="item.type == 'selection' || item.type == 'index'">
+					</el-table-column>
+					<!-- expand 支持 tsx 语法 && 作用域插槽 (tsx > slot) -->
+					<el-table-column v-bind="item" :align="item.align ?? 'center'" v-if="item.type == 'expand'" v-slot="scope">
+						<component :is="item.render" :row="scope.row" v-if="item.render"> </component>
+						<slot :name="item.type" :row="scope.row" v-else></slot>
+					</el-table-column>
+					<!-- other 循环递归 -->
+					<TableColumn v-if="!item.type && item.prop && item.isShow" :column="item">
+						<template v-for="slot in Object.keys($slots)" #[slot]="scope">
+							<slot :name="slot" :row="scope.row"></slot>
+						</template>
+					</TableColumn>
+				</template>
+				<!-- 无数据 -->
+				<template #empty>
+					<div class="table-empty">
+						<img src="./images/notData.png" alt="notData" />
+						<div>暂无数据</div>
+					</div>
+				</template>
+			</el-table>
+			<!-- 分页组件 -->
+			<Pagination v-if="pagination" :pageable="pageable" :handleSizeChange="handleSizeChange"
+				:handleCurrentChange="handleCurrentChange" />
+		</div>
+		<!-- 列设置 -->
+		<ColSetting v-if="toolButton" ref="colRef" v-model:colSetting="colSetting" />
 	</div>
-	<!-- 列设置 -->
-	<ColSetting v-if="toolButton" ref="colRef" v-model:colSetting="colSetting" />
 </template>
 
 <script setup lang="ts" name="LProTable">
@@ -204,7 +206,7 @@ defineExpose({ element: tableRef, tableData, pageable, getTableList, search });
 </script>
 
 <style lang="scss" scoped>
-.liquid-pro-table {
+.liquid-table {
 
 	/* stylelint-disable-next-line scss/double-slash-comment-empty-line-before */
 	// 表格 header 样式

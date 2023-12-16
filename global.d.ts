@@ -4,7 +4,6 @@ import LDrawer from './lib/drawer/src/index.vue'
 import LUpload from './lib/upload/src/index.vue'
 import LInputSelect from './lib/input-select/src/index.vue'
 import LDateTimePick from './lib/date-time-pick/src/index.vue'
-import LGrid from './lib/grid/src/index.vue'
 import LSearchForm from './lib/search-form/src/index.vue'
 import LProTable from './lib/pro-table/src/index.vue'
 // GlobalComponents for Volar
@@ -106,7 +105,6 @@ declare module '@vue/runtime-core' {
     LUpload: typeof LUpload
     LInputSelect: typeof LInputSelect
     LDateTimePick: typeof LDateTimePick
-    LGrid: typeof LGrid
     LSearchForm: typeof LSearchForm
     LProTable: typeof LProTable
   }
